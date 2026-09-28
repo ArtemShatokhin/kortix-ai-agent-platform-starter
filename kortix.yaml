@@ -1,0 +1,29 @@
+# kortix.yaml — the platform config (machine image, connectors, triggers, permissions).
+# Kortix is the open-source AI Management System. Edit this file, then `kortix ship`.
+
+machine:
+  image: default
+
+agents:
+  ops-triage:
+    role: Operations
+    description: Reads the logs, groups errors, patches the worst one, opens a change request.
+    model: auto
+    skills: [incident-triage]
+    permissions:
+      github: allow
+      slack: ask
+
+skills:
+  incident-triage:
+    path: skills/incident-triage.md
+
+connectors:
+  github:
+    scope: repo
+
+triggers:
+  - name: morning-sweep
+    schedule: "0 8 * * 1-5"
+    agent: ops-triage
+    prompt: "Sweep the day's errors, reproduce the worst one, patch it, open a change request."
